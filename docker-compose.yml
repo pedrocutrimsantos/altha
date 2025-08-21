@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  altha-contabilidade:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    container_name: altha-contabilidade-app
+
+  # Opcional: Nginx como proxy reverso
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - altha-contabilidade
+    restart: unless-stopped
+    container_name: altha-contabilidade-nginx
